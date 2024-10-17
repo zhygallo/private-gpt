@@ -1,8 +1,6 @@
 import logging
 from pathlib import Path
 
-import tqdm
-import tempfile
 from llama_index.core.readers import StringIterableReader
 from llama_index.core.readers.base import BaseReader
 from llama_index.core.readers.json import JSONReader
@@ -40,15 +38,11 @@ def _try_loading_included_file_formats() -> dict[str, type[BaseReader]]:
         from llama_index.readers.file.mbox import MboxReader  # type: ignore
         from llama_index.readers.file.slides import PptxReader  # type: ignore
         from llama_index.readers.file.tabular import PandasCSVReader  # type: ignore
-        from llama_index.readers.file.video_audio import (  # type: ignore
-            VideoAudioReader,
-        )
     except ImportError as e:
         raise ImportError("`llama-index-readers-file` package not found") from e
 
     default_file_reader_cls: dict[str, type[BaseReader]] = {
         ".hwp": HWPReader,
-        # ".pdf": PDFReader,
         ".pdf": SmartPDFLoader if LLMSHERPA_API_URL else PDFReader,
         ".docx": SmartPDFLoader if LLMSHERPA_API_URL else DocxReader,
         ".pptx": PptxReader,
@@ -57,8 +51,6 @@ def _try_loading_included_file_formats() -> dict[str, type[BaseReader]]:
         ".jpg": ImageReader,
         ".png": ImageReader,
         ".jpeg": ImageReader,
-        # ".mp3": VideoAudioReader,
-        # ".mp4": VideoAudioReader,
         ".csv": SmartPDFLoader if LLMSHERPA_API_URL else PandasCSVReader,
         ".xls": SmartPDFLoader if LLMSHERPA_API_URL else None,
         ".xlsx": SmartPDFLoader if LLMSHERPA_API_URL else None,
@@ -114,7 +106,7 @@ class IngestionHelper:
                 logger.error(f"Error reading file as plain text: {e}")
                 raise ValueError(
                     f"No reader found for extension={extension}, file_name={file_name}"
-                )
+                ) from e
 
         logger.debug(
             f"Specific reader found for extension=%s, {reader_cls=}", extension
@@ -135,7 +127,7 @@ class IngestionHelper:
                 documents = pdf_reader.load_data(file_data.as_posix())
             except Exception as e:
                 logger.error(f"Error extracting images from PDF: {e}")
-                raise ValueError(f"No text extracted from PDF: {file_name}")
+                raise ValueError(f"No text extracted from PDF: {file_name}") from e
 
         if len(documents) == 0:
             logger.warning(f"No documents extracted from file: {file_name}")

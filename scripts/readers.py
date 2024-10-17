@@ -1,10 +1,9 @@
 import logging
-from typing import Any, Dict, List, Optional
-import tqdm
+from typing import Any
 
+import tqdm
 from llama_index.core.readers.base import BaseReader
 from llama_index.core.schema import Document
-
 
 logger = logging.getLogger(__name__)
 
@@ -16,18 +15,22 @@ class CustomImagePagePdfReader(BaseReader):
         self.lang = lang
 
     def load_data(
-        self, pdf_path: str, extra_info: Optional[Dict] = None
-    ) -> List[Document]:
+        self, pdf_path: str, extra_info: dict | None = None
+    ) -> list[Document]:
 
         try:
             import pdf2image
-        except ImportError:
-            raise ImportError("You need to install `pdf2image` to use this reader")
+        except ImportError as e:
+            raise ImportError(
+                "You need to install `pdf2image` to use this reader"
+            ) from e
 
         try:
             import pytesseract
-        except ImportError:
-            raise ImportError("You need to install `pytesseract` to use this reader")
+        except ImportError as e:
+            raise ImportError(
+                "You need to install `pytesseract` to use this reader"
+            ) from e
 
         images = pdf2image.convert_from_path(pdf_path)
         documents = []

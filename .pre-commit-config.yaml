@@ -12,7 +12,6 @@ repos:
   - id: check-yaml
   - id: check-json
   - id: check-added-large-files
-
 - repo: local
   hooks:
   - id: black
@@ -23,7 +22,7 @@ repos:
     stages: [commit]
   - id: ruff
     name: Linter (ruff)
-    entry: ruff
+    entry: ruff check --fix
     language: system
     types: [python]
     stages: [commit]
