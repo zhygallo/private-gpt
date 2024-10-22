@@ -6,13 +6,12 @@ from llama_index.core.readers.base import BaseReader
 from llama_index.core.readers.json import JSONReader
 from llama_index.core.schema import Document
 
+from private_gpt.settings.settings import settings
 from scripts.readers import CustomImagePagePdfReader
 
 logger = logging.getLogger(__name__)
 
-LLMSHERPA_API_URL = (
-    "http://localhost:5010/api/parseDocument?renderFormat=all&useNewIndentParser=yes"
-)
+LLMSHERPA_API_URL = settings().llmsherpa.api_url
 
 
 # Inspired by the `llama_index.core.readers.file.base` module
@@ -23,6 +22,12 @@ def _try_loading_included_file_formats() -> dict[str, type[BaseReader]]:
         except ImportError as e:
             raise ImportError(
                 "`llama-index-readers-smart-pdf-loader` package not found"
+            ) from e
+        try:
+            SmartPDFLoader(llmsherpa_api_url=LLMSHERPA_API_URL)
+        except Exception as e:
+            raise ValueError(
+                f"Failed to instantiate SmartPDFLoader with LLMSherpa API URL: {e} check if the server is running"
             ) from e
 
     try:
@@ -104,9 +109,7 @@ class IngestionHelper:
                 return string_reader.load_data([file_data.read_text()])
             except Exception as e:
                 logger.error(f"Error reading file as plain text: {e}")
-                raise ValueError(
-                    f"No reader found for extension={extension}, file_name={file_name}"
-                ) from e
+                return []
 
         logger.debug(
             f"Specific reader found for extension=%s, {reader_cls=}", extension
@@ -127,7 +130,6 @@ class IngestionHelper:
                 documents = pdf_reader.load_data(file_data.as_posix())
             except Exception as e:
                 logger.error(f"Error extracting images from PDF: {e}")
-                raise ValueError(f"No text extracted from PDF: {file_name}") from e
 
         if len(documents) == 0:
             logger.warning(f"No documents extracted from file: {file_name}")

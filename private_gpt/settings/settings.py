@@ -587,6 +587,17 @@ class MilvusSettings(BaseModel):
     )
 
 
+class LlmSherpaSettings(BaseModel):
+    api_url: str = Field(
+        "http://localhost:5010/api/parseDocument?renderFormat=all&useNewIndentParser=yes",
+        description="Base URL of LlmSherpa API.",
+    )
+    timeout: float = Field(
+        120.0,
+        description="Request timeout for the LlmSherpa service in seconds. Default is 120s.",
+    )
+
+
 class Settings(BaseModel):
     server: ServerSettings
     data: DataSettings
@@ -608,6 +619,7 @@ class Settings(BaseModel):
     postgres: PostgresSettings | None = None
     clickhouse: ClickHouseSettings | None = None
     milvus: MilvusSettings | None = None
+    llmsherpa: LlmSherpaSettings | None = None
 
 
 """

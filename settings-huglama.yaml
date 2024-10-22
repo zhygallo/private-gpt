@@ -28,3 +28,7 @@ postgres:
   user: user
   password: pass31415
   schema_name: private_gpt
+
+llmsherpa:
+  api_url: "http://localhost:5010/api/parseDocument?renderFormat=all&useNewIndentParser=yes"
+  timeout: 120.0
