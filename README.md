@@ -1,4 +1,20 @@
-# PrivateGPT 
+# Start
+
+1. Create Postgres database
+```bash
+# Start the Docker container
+docker run -d \
+  --name pgvector \
+  -e POSTGRES_USER=user \
+  -e POSTGRES_PASSWORD=password \
+  -p 5432:5432 \
+  pgvector/pgvector:0.8.0-pg17
+
+# Access the running container
+docker exec -it pgvector psql -U user -c "CREATE DATABASE vector_db;"
+```
+
+# PrivateGPT
 
 <a href="https://trendshift.io/repositories/2601" target="_blank"><img src="https://trendshift.io/api/badge/repositories/2601" alt="imartinez%2FprivateGPT | Trendshift" style="width: 250px; height: 55px;" width="250" height="55"/></a>
 

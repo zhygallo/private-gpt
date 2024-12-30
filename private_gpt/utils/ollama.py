@@ -84,7 +84,7 @@ def process_streaming(generator: Iterator[Mapping[str, Any]]) -> None:
 
 def pull_model(client: Client, model_name: str, raise_error: bool = True) -> None:
     try:
-        installed_models = [model["name"] for model in client.list().get("models", {})]
+        installed_models = [model["model"] for model in client.list().get("models", {})]
         if model_name not in installed_models:
             logger.info(f"Pulling model {model_name}. Please wait...")
             process_streaming(client.pull(model_name, stream=True))

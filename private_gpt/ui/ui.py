@@ -417,7 +417,7 @@ class PrivateGptUi:
                         self._list_ingested_files,
                         headers=["File name"],
                         label="Ingested Files",
-                        height=235,
+                        max_height=235,
                         interactive=False,
                         render=False,  # Rendered under the button
                     )

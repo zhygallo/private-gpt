@@ -26,7 +26,7 @@ postgres:
   port: 5432
   database: vector_db
   user: user
-  password: pass31415
+  password: password
   schema_name: private_gpt
 
 llmsherpa:
